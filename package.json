@@ -1,0 +1,26 @@
+{
+  "name": "target",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-share": "cd packages/shared && npm run dev",
+    "start-web": "cd packages/web && npm run dev",
+    "start": "concurrently --names 'share,web' -p name -k 'npm:start-share' 'npm:start-web'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fragment0/Target.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "author": "fragment0",
+  "devDependencies": {
+    "@fragment0/tslint-config": "^0.1.6",
+    "@types/node": "^10.12.9",
+    "concurrently": "^4.1.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
+  }
+}
