@@ -4,8 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build-share": "cd packages/shared && npm run build",
     "start-share": "cd packages/shared && npm run dev",
     "start-web": "cd packages/web && npm run dev",
+    "prestart": "npm run build-share",
     "start": "concurrently --names 'share,web' -p name -k 'npm:start-share' 'npm:start-web'"
   },
   "repository": {
