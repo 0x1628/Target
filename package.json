@@ -19,7 +19,7 @@
   ],
   "author": "fragment0",
   "devDependencies": {
-    "@fragment0/tslint-config": "^0.1.6",
+    "@fragment0/tslint-config": "^0.1.7",
     "@types/node": "^10.12.9",
     "concurrently": "^4.1.0",
     "tslint": "^5.11.0",

@@ -6,7 +6,14 @@
     "build": "../../node_modules/.bin/tsc -p .",
     "dev": "../../node_modules/.bin/tsc -p . -w"
   },
-  "dependencies": {
+  "peer-dependencies": {
     "react": "^16.6.3"
+  },
+  "dependencies": {
+    "react-redux": "^5.1.1",
+    "redux": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/react-redux": "^6.0.9"
   }
 }

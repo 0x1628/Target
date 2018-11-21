@@ -32,16 +32,26 @@ const EventEmitter =  {
 interface EasyReactRouterProps {
   base: string
   initLocation?: string
+  default: string
+  wildcards?: string2any
 }
 
 interface EasyReactRouterState {
   currentPage: React.ComponentClass | null
   loading: boolean
+  data: any
+}
+
+export interface EasyReactRouterComponentProps {
+  path: string[] | null
+  search: string
+  hash: string
 }
 
 export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyReactRouterState> {
   static defaultProps: Partial<EasyReactRouterProps> = {
     base: 'pages',
+    default: 'index',
   }
 
   constructor(props: EasyReactRouterProps) {
@@ -49,7 +59,7 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
     if (props.initLocation) { // server render
       this.findTargetPage(props.initLocation)
     } else {
-      this.state = {loading: true, currentPage: null}
+      this.state = {loading: true, currentPage: null, data: null}
     }
   }
 
@@ -72,20 +82,39 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
   }
 
   findTargetPage(location: string, originError?: any) {
-    const {base} = this.props
+    const {base, default: defaultPage, wildcards} = this.props
     const locationObject = new URL(location, 'http://whatever/')
     let path = locationObject.pathname.slice(1)
     if (!path) {
-      path = 'index'
+      path = defaultPage
     }
-    const pageFolderName = path.replace(/\//ig, '-')
+    let pageFolderName = path.replace(/\//ig, '-')
+    const data: EasyReactRouterComponentProps = {
+      search: locationObject.search.slice(1),
+      hash: locationObject.hash.slice(1),
+      path: null as null | any[],
+    }
+    if (wildcards) {
+      Object.keys(wildcards).some(re => {
+        const pathRe = new RegExp(re, 'ig')
+        const result = pathRe.exec(locationObject.pathname)
+        if (result) {
+          data.path = result.slice(1)
+          pageFolderName = wildcards[re]
+          return true
+        }
+        return false
+      })
+    }
+    console.log(base, pageFolderName)
     import(`./${base}/${pageFolderName}/index`).then(res => {
       if (!res || !res.default) {
         throw new Error('NotFound')
       }
       this.setState({
-        currentPage: res.default || null,
+        currentPage: res.default,
         loading: false,
+        data,
       })
     }).catch(e => {
       if (path !== '404') {
@@ -95,15 +124,16 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
         this.setState({
           currentPage: null,
           loading: false,
+          data: null,
         })
       }
     })
   }
 
   render() {
-    const {currentPage: CurrentPage, loading} = this.state
+    const {currentPage: CurrentPage, loading, data} = this.state
     if (loading || !CurrentPage) return null
-    return <CurrentPage />
+    return <CurrentPage {...data} />
   }
 }
 

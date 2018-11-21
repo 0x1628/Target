@@ -17,6 +17,7 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     globalObject: 'this',
+    publicPath: '/',
   },
   module: {
     rules: [
@@ -53,5 +54,6 @@ module.exports = {
   devServer: {
     hotOnly: true,
     host: '0.0.0.0',
+    historyApiFallback: true,
   },
 }
