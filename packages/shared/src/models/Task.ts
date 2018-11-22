@@ -1,17 +1,12 @@
-enum TaskState {
-  Normal = 0,
-  Important,
-  Done,
-}
+import {uuid} from '../utils'
 
-export interface TaskInterface {
-  id: string
-  title: string
-  description: string
-  beginDate: string
-  endDate: string
-  parentId: string
-  childrenIds: string[]
-  state: TaskState
-  tags: string[]
+export function create(task: Partial<Task>, index?: number): Partial<Task> {
+  if (!task.title) {
+    throw new Error('task must have title on it')
+  }
+  if (!task.id) {
+    task.id = uuid(index)
+  }
+
+  return task
 }

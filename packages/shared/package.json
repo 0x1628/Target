@@ -6,6 +6,7 @@
     "build": "../../node_modules/.bin/tsc -p .",
     "dev": "../../node_modules/.bin/tsc -p . -w"
   },
+  "typings": "./global.d.ts",
   "peer-dependencies": {
     "react": "^16.6.3"
   },

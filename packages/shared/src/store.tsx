@@ -1,17 +1,17 @@
 import * as React from 'react'
 import {createStore, compose, applyMiddleware, Store} from 'redux'
 import {Provider} from 'react-redux'
+import thunk from 'redux-thunk'
 import {createRootReducer} from './redux'
 
-const middlewares: any[] = []
+const middlewares: any[] = [thunk]
 
 let store: Store
 
 function finalCreateStore(preloadedState: any, isDebug = false): Store {
   let enhancer = null
-
-  if (isDebug && (global as any).devToolsExtension) {
-    enhancer = compose(applyMiddleware(...middlewares), (global as any).devToolsExtension())
+  if (isDebug && (global as any).__REDUX_DEVTOOLS_EXTENSION__ ) {
+    enhancer = compose(applyMiddleware(...middlewares), (global as any).__REDUX_DEVTOOLS_EXTENSION__())
   } else {
     enhancer = applyMiddleware(...middlewares)
   }

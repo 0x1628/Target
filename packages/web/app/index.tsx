@@ -5,7 +5,7 @@ import {createRoot} from 'shared/store'
 import App from './App'
 
 const cached = persist()
-const Root = createRoot()
+const Root = createRoot({}, true) // TODO
 
 render(cached(<Root><App /></Root>), document.getElementById('root'))
 

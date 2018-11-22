@@ -22,3 +22,9 @@ export function getSpDate(date?: string | Date | number, increment?: number): st
   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}\
 -${date.getDate().toString().padStart(2, '0')}`
 }
+
+export function uuid(prefix?: number | string): string {
+  const id = parseInt(`${Date.now()}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`, 10)
+    .toString(16)
+  return `${prefix}${prefix ? '-' : ''}${id}`
+}

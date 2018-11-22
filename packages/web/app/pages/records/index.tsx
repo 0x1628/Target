@@ -1,17 +1,28 @@
 import * as React from 'react'
-import RecordContainer from 'shared/containers/RecordContainer'
+import RecordContainer, {CallbackArguments} from 'shared/containers/RecordContainer'
 import {getSpDate} from 'shared/utils'
 import {EasyReactRouterComponentProps} from '../../easy-react-router'
 import DateSign from '../../components/DateSign'
+
+interface TasksProps {
+  tasks: CallbackArguments['tasks']
+  onAdd: CallbackArguments['actions']['addTask'],
+}
+
+const Tasks: React.SFC<TasksProps> = ({tasks, onAdd}) => {
+  return (
+    <div onClick={() => onAdd({title: 'haha'})}>{tasks.length}Click</div>
+  )
+}
 
 const RecordsIndex: React.SFC<EasyReactRouterComponentProps> = ({path}) => {
   const currentDate = path ? path[0] : getSpDate()
 
   return <RecordContainer date={currentDate}>
-    {({tasks}) => (
+    {({tasks, actions}) => (
       <>
         <DateSign date={currentDate} />
-        <div>Record container {tasks.length}</div>
+        <Tasks tasks={tasks} onAdd={actions.addTask} />
       </>
     )}
   </RecordContainer>

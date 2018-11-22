@@ -8,7 +8,8 @@
   "dependencies": {
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-state-persist": "^0.1.0"
+    "react-state-persist": "^0.1.0",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@types/react": "^16.7.6",

@@ -2,6 +2,11 @@
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "jsx": "react",
-    "lib": ["es2015", "dom"]
-  }
+    "lib": ["esnext", "dom"],
+    "rootDir": "../"
+  },
+  "include": [
+    "app/**/*",
+    "../shared/**/*"
+  ]
 }
