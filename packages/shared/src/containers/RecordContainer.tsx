@@ -2,9 +2,10 @@ import * as React from 'react'
 import {connect} from 'react-redux'
 import {RootState} from '../redux'
 import {addTask as reduxAddTask} from '../redux/tasks'
+import {Task} from '../models/Task'
 
 export interface CallbackArguments {
-  tasks: any[]
+  tasks: Task[]
   actions: DispatchMethods
 }
 
@@ -15,11 +16,15 @@ interface RecordContainerProps {
 
 export const RecordContainerContext = React.createContext({actions: {} as DispatchMethods})
 
-class RecordContainer extends React.Component<RecordContainerProps & DispatchMethods> {
+class RecordContainer extends React.Component<
+  RecordContainerProps &
+  ReturnType<typeof mapStateToProps> &
+  DispatchMethods
+> {
   render() {
-    const {addTask} = this.props
+    const {addTask, tasks} = this.props
     return this.props.children({
-      tasks: [],
+      tasks,
       actions: {
         addTask,
       },
@@ -28,12 +33,14 @@ class RecordContainer extends React.Component<RecordContainerProps & DispatchMet
 }
 
 function mapStateToProps(state: RootState) {
-  // const t = state.tasks[123]
-  return state
+  const data = state.tasks.data
+  return {
+    tasks: Object.values(data),
+  }
 }
 
 type DispatchMethods = {
-  addTask: any,
+  addTask: typeof reduxAddTask,
 }
 
 const mapDispatchToProps: DispatchMethods = {

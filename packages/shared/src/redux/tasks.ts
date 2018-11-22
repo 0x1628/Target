@@ -1,13 +1,24 @@
 import {ThunkAction} from 'redux-thunk'
 import {RootState} from './index'
-import {create} from '../models/Task'
+import {create, Task} from '../models/Task'
 
-export function addTask(task: Partial<Task>): ThunkAction<any, RootState, any, any> {
+enum ActionName {
+  Add = 'tasks:add',
+  Delete = 'tasks:delete',
+  Modify = 'tasks:update',
+  Get = 'tasks:get',
+}
+
+type Actions =
+  {type: ActionName.Add, payload: Task, meta: Meta}
+  | {type: ActionName.Delete, payload: Task, meta: Meta}
+
+export function addTask(task: Partial<Task>): ThunkAction<void, RootState, null, Actions> {
   return (dispatch, getState) => {
     const last = getState().tasks.meta.last
 
-    return dispatch({
-      type: 'test',
+    dispatch({
+      type: ActionName.Add,
       payload: create({
         ...task,
       }, last + 1),
@@ -36,12 +47,20 @@ const defaultState: TaskReducerState = {
   data: {},
 }
 
-export default function (state = {...defaultState}, action: any) {
-  console.log(action)
+export default function (state = {...defaultState}, action: Actions) {
   switch (action.type) {
-    case 'test': {
-      console.log(233)
-      return state
+    case ActionName.Add: {
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          [action.payload.id]: action.payload,
+        },
+        meta: {
+          ...state.meta,
+          last: action.meta.last,
+        },
+      }
     }
     default:
       return state
