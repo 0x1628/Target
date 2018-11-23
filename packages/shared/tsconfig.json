@@ -5,6 +5,6 @@
     "outDir": "dist",
     "jsx": "react",
     "declaration": true,
-    "lib": ["esnext"]
+    "lib": ["esnext", "dom"]
   }
 }

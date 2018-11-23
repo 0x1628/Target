@@ -3,8 +3,9 @@ import {createStore, compose, applyMiddleware, Store} from 'redux'
 import {Provider} from 'react-redux'
 import thunk from 'redux-thunk'
 import {createRootReducer} from './redux'
+import localdb from './utils/redux-localdb'
 
-const middlewares: any[] = [thunk]
+const middlewares: any[] = [thunk, localdb]
 
 let store: Store
 
