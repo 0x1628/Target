@@ -7,6 +7,7 @@ const isDev = process.env.NODE_ENV !== 'production'
 const buildVersion = `${Date.now()}`
 
 module.exports = {
+  stats: 'minimal',
   mode: isDev ? 'development' : 'production',
   entry: {
     app: [
@@ -24,10 +25,14 @@ module.exports = {
       {
         test: /.tsx?$/,
         loader: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /shared\/.+\.d\.ts/],
         options: {
           projectReferences: true,
         },
+      },
+      {
+        test: /\.d\.ts$/,
+        loader: 'ignore-loader',
       },
     ],
   },
@@ -52,6 +57,7 @@ module.exports = {
     }),
   ].filter(Boolean),
   devServer: {
+    stats: 'minimal',
     hotOnly: true,
     host: '0.0.0.0',
     historyApiFallback: true,
