@@ -3,9 +3,8 @@ import {createStore, compose, applyMiddleware, Store} from 'redux'
 import {Provider} from 'react-redux'
 import thunk from 'redux-thunk'
 import {createRootReducer} from './redux'
-import localdb from './utils/redux-localdb'
 
-const middlewares: any[] = [thunk, localdb]
+const middlewares: any[] = [thunk]
 
 let store: Store
 
@@ -23,8 +22,8 @@ function finalCreateStore(preloadedState: any, isDebug = false): Store {
   return store
 }
 
-export function init(isDebug?: boolean) {
-  store = finalCreateStore({}, isDebug)
+export function init(preloadedState?: any, isDebug?: boolean) {
+  store = finalCreateStore(preloadedState, isDebug)
 
   return store
 }
@@ -32,7 +31,7 @@ export function init(isDebug?: boolean) {
 type CreateRoot = (preloadedState?: any, isDebug?: boolean) => React.ComponentClass
 
 export const createRoot: CreateRoot = (preloadedState = {}, isDebug = false) => {
-  const targetStore = init(isDebug)
+  const targetStore = init(preloadedState, isDebug)
 
   class Root extends React.Component {
     render() {

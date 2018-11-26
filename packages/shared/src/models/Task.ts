@@ -1,4 +1,5 @@
 import {uuid} from '../utils'
+import {Base} from './Base'
 
 enum TaskState {
   Normal = 0,
@@ -6,8 +7,7 @@ enum TaskState {
   Done,
 }
 
-export interface Task {
-  id: string
+export interface Task extends Base {
   title: string
   description: string
   beginDate: string | null
@@ -18,7 +18,7 @@ export interface Task {
   tags: string[]
 }
 
-export function create(task: Partial<Task>, index?: number): Task {
+export function create(task: Partial<Task>, index: number): Task {
   if (!task.title) {
     throw new Error('task must have title on it')
   }
