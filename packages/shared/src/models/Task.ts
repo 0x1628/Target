@@ -10,8 +10,8 @@ enum TaskState {
 export interface Task extends Base {
   title: string
   description: string
-  beginDate: string | null
   endDate: string | null
+  dueDate: string | null
   parentId: string | null
   childrenIds: string[]
   state: TaskState
@@ -28,8 +28,8 @@ export function create(task: Partial<Task>, index: number): Task {
 
   return {
     description: '',
-    beginDate: null,
     endDate: null,
+    dueDate: null,
     parentId: null,
     childrenIds: [],
     tags: [],

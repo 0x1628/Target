@@ -3,6 +3,7 @@ import RecordContainer, {CallbackArguments} from 'shared/containers/RecordContai
 import {getSpDate} from 'shared/utils'
 import {EasyReactRouterComponentProps} from '../../easy-react-router'
 import DateSign from '../../components/DateSign'
+import NavBar from '../../components/NavBar'
 
 interface TasksProps {
   tasks: CallbackArguments['tasks']
@@ -23,6 +24,7 @@ const RecordsIndex: React.SFC<EasyReactRouterComponentProps> = ({path}) => {
       <>
         <DateSign date={currentDate} />
         <Tasks tasks={tasks} onAdd={actions.addTask} />
+        <NavBar onAdd={actions.addTask} addParams={{endDate: currentDate}}></NavBar>
       </>
     )}
   </RecordContainer>

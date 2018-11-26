@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "react-redux": "^5.1.1",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "styled-components": "^4.1.1"
   },
   "devDependencies": {
-    "@types/react-redux": "^6.0.9"
+    "@types/react-redux": "^6.0.9",
+    "@types/styled-components": "^4.1.1"
   }
 }

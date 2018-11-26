@@ -34,6 +34,7 @@ interface EasyReactRouterProps {
   initLocation?: string
   default: string
   wildcards?: string2any
+  renderer?(Child: JSX.Element): JSX.Element
 }
 
 interface EasyReactRouterState {
@@ -132,8 +133,13 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
 
   render() {
     const {currentPage: CurrentPage, loading, data} = this.state
+    const {renderer} = this.props
     if (loading || !CurrentPage) return null
-    return <CurrentPage {...data} />
+    if (!renderer) {
+      return <CurrentPage {...data} />
+    } else {
+      return renderer(<CurrentPage {...data} />)
+    }
   }
 }
 
@@ -161,15 +167,14 @@ interface LinkProps {
   href: string
   target?: '_blank' | '_self' | undefined
   Component?: string | React.ComponentClass
-  children?: React.ReactNode
 }
 
-export function Link({
+export const Link: React.SFC<LinkProps> = ({
   href,
   target,
   children,
   Component,
-  ...rest}: LinkProps) {
+  ...rest}) => {
   const onClick = (e: Event) => {
     e.preventDefault()
 
