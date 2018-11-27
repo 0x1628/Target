@@ -10,13 +10,13 @@ interface TasksProps {
   onAdd: CallbackArguments['actions']['addTask'],
 }
 
-const Tasks: React.SFC<TasksProps> = ({tasks, onAdd}) => {
+const Tasks: React.FunctionComponent<TasksProps> = ({tasks, onAdd}) => {
   return (
     <div onClick={() => onAdd({title: 'haha'})}>{tasks.length}Click</div>
   )
 }
 
-const RecordsIndex: React.SFC<EasyReactRouterComponentProps> = ({path}) => {
+const RecordsIndex: React.FunctionComponent<EasyReactRouterComponentProps> = ({path}) => {
   const currentDate = path ? path[0] : getSpDate()
 
   return <RecordContainer date={currentDate}>

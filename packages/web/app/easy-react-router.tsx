@@ -169,7 +169,7 @@ interface LinkProps {
   Component?: string | React.ComponentClass
 }
 
-export const Link: React.SFC<LinkProps> = ({
+export const Link: React.FunctionComponent<LinkProps> = ({
   href,
   target,
   children,

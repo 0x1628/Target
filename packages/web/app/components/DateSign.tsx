@@ -4,7 +4,7 @@ interface DateSignProps {
   date: string
 }
 
-const DateSign: React.SFC<DateSignProps> = ({date}) => {
+const DateSign: React.FunctionComponent<DateSignProps> = ({date}) => {
   return (
     <div>{date}</div>
   )
