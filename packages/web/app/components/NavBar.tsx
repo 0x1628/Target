@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {CallbackArguments} from 'shared/containers/RecordContainer'
 import {Task} from 'shared/models/Task'
-import Dialog from './Dialog'
+import If from 'shared/components/If'
+import Modal from './Modal'
 import Button from './Button'
 
 type AddParams = {
@@ -15,14 +16,25 @@ interface NavBarProps {
   children?: JSX.Element
 }
 
-class NavBar extends React.Component<NavBarProps> {
+interface NavBarState {
+  showAddModal: boolean
+}
+
+class NavBar extends React.Component<NavBarProps, NavBarState> {
+
+  state: NavBarState = {showAddModal: false}
 
   handleAdd = (e: React.MouseEvent) => {
-    //
+    this.setState({showAddModal: true})
+  }
+
+  handleCloseAdd = () => {
+    this.setState({showAddModal: false})
   }
 
   render() {
     const {children} = this.props
+    const {showAddModal} = this.state
     return (
       <>
         <div>
@@ -30,7 +42,9 @@ class NavBar extends React.Component<NavBarProps> {
           {children}
           <Button onClick={this.handleAdd}>Add</Button>
         </div>
-        <Dialog>test</Dialog>
+        <If value={showAddModal}>
+          <Modal unmountDelay={2000} onRequestClose={this.handleCloseAdd}>this is modal</Modal>
+        </If>
       </>
     )
   }

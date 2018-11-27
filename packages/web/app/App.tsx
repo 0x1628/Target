@@ -17,7 +17,7 @@ sup, table, tbody, td, tfoot, th, thead, time, tr, tt, u, ul, var, video {
   vertical-align: baseline;
 }
 
-#react-root, #modal-root, article, div, footer, header, main, nav, section {
+#react-root, #portal-root, article, div, footer, header, main, nav, section {
   display: flex;
   flex-direction: column;
   align-items: stretch;
