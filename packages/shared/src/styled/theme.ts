@@ -11,4 +11,5 @@ export const theme: ThemeInterface = {
   headingColor: '#222',
   disabledColor: '#8a8a8f',
   borderColor: '#8a8a8f',
+  horizontalPadding: '18px',
 }

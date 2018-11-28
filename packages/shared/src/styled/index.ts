@@ -11,6 +11,7 @@ interface ThemeInterface {
   headingColor: string
   disabledColor: string
   borderColor: string
+  horizontalPadding: string
 }
 
 const {

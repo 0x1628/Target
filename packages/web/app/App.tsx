@@ -28,7 +28,7 @@ sup, table, tbody, td, tfoot, th, thead, time, tr, tt, u, ul, var, video {
 }
 
 body, button, input, textarea {
-  line-height: 18px;
+  line-height: 1;
   font-size: ${props => props.theme.fontSizeBase};
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
     'Helvetica Neue', 'PingFang SC', 'Microsoft Yahei', 'WenQuanYi Micro Hei',

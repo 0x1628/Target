@@ -1,8 +1,10 @@
 import * as React from 'react'
 import {createPortal} from 'react-dom'
+import {UnmountProps} from 'shared/lang/index'
 
-export interface PortalProps {
-  unmountDelay: number
+// tslint:disable-next-line
+export interface PortalProps extends UnmountProps {
+  //
 }
 
 class Portal extends React.Component<PortalProps> {

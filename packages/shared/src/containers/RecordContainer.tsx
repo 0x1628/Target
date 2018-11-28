@@ -33,7 +33,7 @@ class RecordContainer extends React.Component<
 }
 
 function mapStateToProps(state: RootState, props: RecordContainerProps) {
-  let tasks = Object.values(state.tasks.data)
+  let tasks = state.tasks.data
   if (props.date) {
     tasks = tasks.filter(task => task.endDate === props.date)
   }

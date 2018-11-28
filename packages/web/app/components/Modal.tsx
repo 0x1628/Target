@@ -1,5 +1,6 @@
 import * as React from 'react'
 import Portal, {PortalProps} from './Portal'
+import If from 'shared/lang/If'
 
 interface ModalProps extends PortalProps {
   mask: boolean
@@ -15,9 +16,9 @@ class Modal extends React.Component<ModalProps> {
     const {mask, children, onRequestClose, ...rest} = this.props
     return (
       <Portal {...rest}>
-        {mask &&
-        <div onClick={onRequestClose}>mask</div>
-        }
+        <If value={mask}>
+          <div onClick={onRequestClose}>mask</div>
+        </If>
         {children}
       </Portal>
     )

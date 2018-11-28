@@ -34,6 +34,10 @@ module.exports = {
         test: /\.d\.ts$/,
         loader: 'ignore-loader',
       },
+      {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader?classPrefix',
+      },
     ],
   },
   resolve: {

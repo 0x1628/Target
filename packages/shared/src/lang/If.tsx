@@ -1,4 +1,5 @@
 import * as React from 'react'
+import {UnmountProps} from './index'
 
 interface IfProps {
   value: any
@@ -38,7 +39,7 @@ class If extends React.Component<IfProps> {
     } else if (destroy) {
       return null
     } else {
-      const childProps = children.props
+      const childProps = children.props as Partial<UnmountProps>
       if (childProps.unmountDelay) {
         setTimeout(() => {
           this.setState({destroy: true})
