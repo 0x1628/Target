@@ -1,11 +1,19 @@
 import * as React from 'react'
 import {createPortal} from 'react-dom'
 import {UnmountProps} from 'shared/lang/index'
+import styled from 'shared/styled'
 
 // tslint:disable-next-line
 export interface PortalProps extends UnmountProps {
   //
 }
+
+const Wrapper = styled.div`
+position: absolute;
+top: 0;
+left: 0;
+z-index: ${props => props.theme.zIndexPortal};
+`
 
 class Portal extends React.Component<PortalProps> {
   static defaultProps: PortalProps = {unmountDelay: 0}
@@ -32,7 +40,10 @@ class Portal extends React.Component<PortalProps> {
   }
 
   render() {
-    return createPortal(this.props.children, this.el)
+    return createPortal((
+      <Wrapper>
+        {this.props.children}
+      </Wrapper>), this.el)
   }
 }
 

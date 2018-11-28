@@ -1,18 +1,5 @@
 import * as styledComponents from 'styled-components'
-
-interface ThemeInterface {
-  primaryColor: string
-  linkColor: string
-  successColor: string
-  errorColor: string
-  fontSizeBase: string
-  textColor: string
-  textColorSecondary: string
-  headingColor: string
-  disabledColor: string
-  borderColor: string
-  horizontalPadding: string
-}
+import {ThemeInterface} from './theme'
 
 const {
   default: styled,

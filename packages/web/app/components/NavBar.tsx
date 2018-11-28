@@ -68,6 +68,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
   render() {
     const {children} = this.props
     const {showAddModal} = this.state
+
     return (
       <>
         <NavBarWrapper>
