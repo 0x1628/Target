@@ -1,5 +1,5 @@
 import * as React from 'react'
-import styled from 'shared/styled'
+import styled, {css} from 'shared/styled'
 import Modal from './Modal'
 import Editable from './Editable'
 
@@ -15,6 +15,7 @@ const Wrapper = styled.div`
   background: #fff;
   border-radius: 10px;
   height: 160px;
+  padding-top: 20px;
   top: 80px;
   box-shadow: 0 0 10px ${props => props.theme.shadowColor};
   transition: all ease-out ${Modal.transitionDuration / 1000}s;
@@ -30,14 +31,48 @@ const Wrapper = styled.div`
     transform: scale(.9);
     opacity: 0;
   }
+
+  & .input-items {
+    padding: 0 20px;
+    flex: 1;
+  }
+
+  & .title-input {
+    font-size: 16px;
+  }
+
+  & .description-input {
+    margin-top: 10px;
+    line-height: 1.4;
+    flex: 1;
+  }
 `
 
+const TitleInputStyle = css``
+
 class TaskAddDialog extends React.Component<TaskAddDialogProps> {
+  handleTitleChange = (str: string) => {
+    console.log(str)
+  }
+
+  handleDescriptionChange = (str: string) => {
+    //
+  }
+
   render() {
     return (
       <Wrapper>
-        <div>
-          <Editable />
+        <div className="input-items">
+          <Editable
+            placeholder="New To-Do"
+            onChange={this.handleTitleChange}
+            className="title-input"
+          />
+          <Editable
+            placeholder="Notes"
+            onChange={this.handleDescriptionChange}
+            className="description-input"
+          />
         </div>
       </Wrapper>
     )

@@ -8,6 +8,7 @@ export interface ThemeInterface {
   fontSizeBase: string
   textColor: string
   textColorSecondary: string
+  textColorMuted: string
   headingColor: string
   disabledColor: string
   borderColor: string
@@ -25,6 +26,7 @@ export const theme: ThemeInterface = {
   fontSizeBase: '14px',
   textColor: '#222',
   textColorSecondary: '#777',
+  textColorMuted: '#aaa',
   headingColor: '#222',
   disabledColor: '#8a8a8f',
   borderColor: '#8a8a8f',

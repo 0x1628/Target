@@ -1,25 +1,37 @@
 import * as React from 'react'
+import * as cx from 'classnames'
+import styled from 'shared/styled'
 
 interface EditableProps {
   type: 'singleline' | 'multiline'
-  defaultValue?: 'string'
+  defaultValue?: string
+  className?: string
   readOnly: boolean
   placeholder?: string
+  onChange(str: string): void
 }
 
 interface EditableState {
   focused: boolean
 }
 
+const EditableWrapper = styled.div`
+  outline: none;
+
+  &.is-placeholder {
+    color: ${props => props.theme.textColorMuted}
+  }
+`
+
 class Editable extends React.Component<EditableProps, EditableState> {
   static emptyDiv = '<div><br /></div>'
 
-  static defaultProps: Partial<EditableProps> = {
+  static defaultProps = {
     type: 'singleline',
     readOnly: false,
   }
 
-  html: string | null = null
+  html = ''
   changed = false
   state: EditableState = {focused: false}
   inputEl: HTMLElement | null = null
@@ -60,23 +72,41 @@ class Editable extends React.Component<EditableProps, EditableState> {
 
   handleInput = () => {
     this.changed = true
-
+    if (!this.inputEl!.innerHTML || /^<br ?\/?>$/.test(this.inputEl!.innerHTML)) {
+      this.inputEl!.innerHTML = Editable.emptyDiv
+    }
+    this.html = this.inputEl!.innerHTML
+    this.handleSave()
   }
 
   handleFocus = () => {
-
+    this.setState({focused: true})
+    const s = window.getSelection()
+    const r = document.createRange()
+    r.setStart(this.inputEl!, 0)
+    r.setEnd(this.inputEl!, 0)
+    s.removeAllRanges()
+    s.addRange(r)
   }
 
   handleBlur = () => {
-
+    this.setState({focused: false})
+    this.html = this.inputEl!.innerHTML
+    this.handleSave(true)
   }
 
-  handleSave(immediateFlag: boolean) {
+  handleSave(immediateFlag = false) {
+    const {type, onChange} = this.props
 
+    if (onChange && this.changed) {
+      const result = type === 'singleline' ? this.html.replace(/<.+?>/g, '')
+        : this.clean()
+      onChange(result)
+    }
   }
 
   render() {
-    const {placeholder, readOnly} = this.props
+    const {placeholder, readOnly, className} = this.props
     const {focused} = this.state
 
     let html = this.html
@@ -94,7 +124,8 @@ class Editable extends React.Component<EditableProps, EditableState> {
     }
 
     return (
-      <div
+      <EditableWrapper
+        className={cx(className, usePlaceholder && 'is-placeholder')}
         role="textbox"
         tabIndex={0}
         contentEditable
