@@ -6,6 +6,7 @@ import styled from 'shared/styled'
 import Icon from 'shared/elements/Icon'
 import Modal from './Modal'
 import Button from './Button'
+import TaskAddDialog from './TaskAddDialog'
 
 type AddParams = {
   parentId?: Task['parentId'],
@@ -90,7 +91,13 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
           </Button>
         </NavBarWrapper>
         <If value={showAddModal}>
-          <Modal unmountDelay={2000} onRequestClose={this.handleCloseAdd}>this is modal</Modal>
+          <Modal
+            shouldCloseOnMaskClick={true}
+            unmountDelay={Modal.transitionDuration}
+            onRequestClose={this.handleCloseAdd}
+          >
+            <TaskAddDialog onRequestClose={this.handleCloseAdd} />
+          </Modal>
         </If>
       </>
     )

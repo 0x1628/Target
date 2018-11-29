@@ -14,6 +14,7 @@ export interface ThemeInterface {
   horizontalPadding: string
   zIndexPortal: number
   maskBg: string
+  shadowColor: string
 }
 
 export const theme: ThemeInterface = {
@@ -29,5 +30,6 @@ export const theme: ThemeInterface = {
   borderColor: '#8a8a8f',
   horizontalPadding: '18px',
   zIndexPortal: 1000,
-  maskBg: 'rgba(255, 255, 255, .8)',
+  maskBg: 'rgba(0, 0, 0, .6)',
+  shadowColor: 'rgba(0, 0, 0, .8)',
 }

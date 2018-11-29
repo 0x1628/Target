@@ -5,7 +5,7 @@ import styled from 'shared/styled'
 
 // tslint:disable-next-line
 export interface PortalProps extends UnmountProps {
-  //
+  forwardedRef?: React.Ref<any>,
 }
 
 const Wrapper = styled.div`
@@ -40,11 +40,14 @@ class Portal extends React.Component<PortalProps> {
   }
 
   render() {
+    const {children, forwardedRef} = this.props
     return createPortal((
-      <Wrapper>
-        {this.props.children}
+      <Wrapper ref={forwardedRef}>
+        {children}
       </Wrapper>), this.el)
   }
 }
 
-export default Portal
+export default React.forwardRef<HTMLElement, PortalProps>(({children, ...rest}, ref?) => (
+  <Portal {...rest} forwardedRef={ref}>{children}</Portal>
+))

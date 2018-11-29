@@ -11,13 +11,13 @@ interface IfState {
   destroy: boolean
 }
 
-class If extends React.Component<IfProps> {
+class If extends React.Component<IfProps, IfState> {
   static getDerivedStateFromProps(nextProps: IfProps, state: IfState) {
     if (state.inited) {
       return null
     }
     if (Boolean(nextProps.value)) {
-      return {inited: true}
+      return {inited: true, destroy: false}
     }
     return null
   }
@@ -29,11 +29,9 @@ class If extends React.Component<IfProps> {
     const {destroy, inited} = this.state
 
     const condition = Boolean(value)
-
     if (!inited) {
       return null
     }
-
     if (condition) {
       return children
     } else if (destroy) {
@@ -42,7 +40,7 @@ class If extends React.Component<IfProps> {
       const childProps = children.props as Partial<UnmountProps>
       if (childProps.unmountDelay) {
         setTimeout(() => {
-          this.setState({destroy: true})
+          this.setState({destroy: true, inited: false})
         }, childProps.unmountDelay)
         return children
       }

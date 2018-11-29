@@ -38,7 +38,6 @@ interface EasyReactRouterProps {
 }
 
 interface EasyReactRouterState {
-  currentPage: React.ComponentClass | null
   loading: boolean
   data: any
 }
@@ -55,12 +54,14 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
     default: 'index',
   }
 
+  currentPage: React.ComponentClass | null = null
+
   constructor(props: EasyReactRouterProps) {
     super(props)
     if (props.initLocation) { // server render
       this.findTargetPage(props.initLocation)
     } else {
-      this.state = {loading: true, currentPage: null, data: null}
+      this.state = {loading: true, data: null}
     }
   }
 
@@ -107,13 +108,13 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
         return false
       })
     }
-    console.log(base, pageFolderName)
+
     import(`./${base}/${pageFolderName}/index`).then(res => {
       if (!res || !res.default) {
         throw new Error('NotFound')
       }
+      this.currentPage = res.default
       this.setState({
-        currentPage: res.default,
         loading: false,
         data,
       })
@@ -122,8 +123,8 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
         this.findTargetPage('/404', e)
       } else {
         console.error(originError || e)
+        this.currentPage = null
         this.setState({
-          currentPage: null,
           loading: false,
           data: null,
         })
@@ -132,7 +133,8 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
   }
 
   render() {
-    const {currentPage: CurrentPage, loading, data} = this.state
+    const {loading, data} = this.state
+    const CurrentPage = this.currentPage
     const {renderer} = this.props
     if (loading || !CurrentPage) return null
     if (!renderer) {

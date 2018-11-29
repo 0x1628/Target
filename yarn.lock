@@ -3390,10 +3390,10 @@ react-redux@^5.1.1:
     react-is "^16.6.0"
     react-lifecycles-compat "^3.0.0"
 
-react-state-persist@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/react-state-persist/-/react-state-persist-0.1.0.tgz#8a22db39b86fa71ff0a0a81e6b44f23ef8d089cd"
-  integrity sha512-XpoB6pnb16gDwI3ctNkl83cjEnUGWGVE/Ry+O1KfbwSXRzMTGfjFQVfv2LKTRxTCMsYbOmo6DvorVFhveQsPkQ==
+react-state-persist@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/react-state-persist/-/react-state-persist-0.0.3.tgz#173139586cc54afb51c6f9085137cf85061bc3c6"
+  integrity sha512-eU3mFDzooWkB3wLxFMupJIi/SE7XUIJjx39Ek2/itHYPGrm0jnz/OZECbMKM4sKI+4Q4atzYV0VwoFLbofNuqA==
 
 react@^16.6.3:
   version "16.6.3"
