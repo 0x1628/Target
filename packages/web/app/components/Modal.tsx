@@ -6,7 +6,12 @@ import If from 'shared/lang/If'
 interface ModalProps extends PortalProps {
   mask: boolean
   shouldCloseOnMaskClick: boolean
+  isOpen: boolean
   onRequestClose(): void
+}
+
+interface ModalState {
+  isOpen: boolean
 }
 
 const showClassName = 'modal--show'
@@ -38,7 +43,7 @@ const ChildWrapper = styled.div`
   width: 100%;
 `
 
-class Modal extends React.Component<ModalProps> {
+class Modal extends React.Component<ModalProps, ModalState> {
   static defaultProps: Partial<ModalProps> = {
     mask: true,
     shouldCloseOnMaskClick: false,
@@ -49,22 +54,55 @@ class Modal extends React.Component<ModalProps> {
   static transitionDuration = transitionDuration
 
   portalEl!: HTMLElement | null
+  state = {isOpen: false}
 
   componentDidMount() {
     const {mask} = this.props
-    setTimeout(() => {
-      if (this.portalEl) {
-        this.portalEl.classList.add(Modal.showClassName)
-      }
+    if (this.props.isOpen && !this.state.isOpen) {
+      this.create()
+    }
+  }
+
+  componentDidUpdate(prevProps: ModalProps, prevState: ModalState) {
+    if (prevProps.isOpen && !this.props.isOpen) {
+      this.destroy()
+    } else if (this.props.isOpen && !this.state.isOpen) {
+      this.create()
+    }
+  }
+
+  create() {
+    this.setState({isOpen: true}, () => {
+      setImmediate(() => {
+        if (this.portalEl) {
+          this.portalEl.classList.add(Modal.showClassName)
+        }
+      })
     })
+  }
+
+  destroy() {
+    const {unmountDelay} = this.props
+    if (this.portalEl) {
+      this.portalEl.classList.add(Modal.hideClassName)
+    }
+    const closeAction = () => {
+      this.setState({
+        isOpen: false,
+      })
+    }
+    if (unmountDelay) {
+      setTimeout(() => {
+        closeAction()
+      }, unmountDelay)
+    } else {
+      closeAction()
+    }
   }
 
   beginClose() {
     const {onRequestClose} = this.props
     onRequestClose()
-    if (this.portalEl) {
-      this.portalEl.classList.add(Modal.hideClassName)
-    }
   }
 
   handleMaskClick = () => {
@@ -77,6 +115,8 @@ class Modal extends React.Component<ModalProps> {
 
   render() {
     const {mask, children, onRequestClose, ...rest} = this.props
+    const {isOpen} = this.state
+    if (!isOpen) return null
     return (
       <Portal {...rest} ref={el => this.portalEl = el}>
         <If value={mask}>

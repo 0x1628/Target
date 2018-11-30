@@ -40,6 +40,10 @@ a {
   color: ${props => props.theme.linkColor};
   text-decoration: none;
 }
+
+#root {
+  min-height: 100vh;
+}
 `
 
 const Layout: React.FunctionComponent = ({children}) => {
@@ -61,10 +65,10 @@ export default class App extends React.Component {
           default="records"
           wildcards={{
             '/records/([\\d-]+)$': 'records',
+            '/tasks/([\\w-]+)$': 'tasks',
           }}
           renderer={(children) => (<Layout>{children}</Layout>)}
         />
-        <Link href="/all">all</Link>
       </>
     )
   }

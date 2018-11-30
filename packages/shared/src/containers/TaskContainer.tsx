@@ -5,24 +5,24 @@ import {addTask as reduxAddTask} from '../redux/tasks'
 import {Task} from '../models/Task'
 
 export interface CallbackArguments {
-  tasks: Task[]
+  task: Task | null
   actions: DispatchMethods
 }
 
-interface RecordContainerProps {
-  date: string
+interface TaskContainerProps {
+  id: string
   children(args: CallbackArguments): JSX.Element
 }
 
-class RecordContainer extends React.Component<
-  RecordContainerProps &
+class TaskContainer extends React.Component<
+  TaskContainerProps &
   ReturnType<typeof mapStateToProps> &
   DispatchMethods
 > {
   render() {
-    const {addTask, tasks} = this.props
+    const {addTask, task} = this.props
     return this.props.children({
-      tasks,
+      task,
       actions: {
         addTask,
       },
@@ -30,13 +30,10 @@ class RecordContainer extends React.Component<
   }
 }
 
-function mapStateToProps(state: RootState, props: RecordContainerProps) {
-  let tasks = state.tasks.data
-  if (props.date) {
-    tasks = tasks.filter(task => task.endDate === props.date)
-  }
+function mapStateToProps(state: RootState, props: TaskContainerProps) {
+  const tasks = state.tasks.data
   return {
-    tasks,
+    task: tasks.find(t => t.id === props.id) || null,
   }
 }
 
@@ -48,4 +45,4 @@ const mapDispatchToProps: DispatchMethods = {
   addTask: reduxAddTask,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecordContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(TaskContainer)

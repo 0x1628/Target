@@ -54,12 +54,12 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
     default: 'index',
   }
 
-  currentPage: React.ComponentClass | null = null
+  currentPage: ValidEasyReactRouterComponent | null = null
 
   constructor(props: EasyReactRouterProps) {
     super(props)
     if (props.initLocation) { // server render
-      this.findTargetPage(props.initLocation)
+      this.parse(props.initLocation || '/')
     } else {
       this.state = {loading: true, data: null}
     }
@@ -68,22 +68,42 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
   componentDidMount() {
     const {initLocation} = this.props
     if (!initLocation) { // client render
-      this.findTargetPage(window.location.href)
+      this.parse(window.location.href)
     }
-    window.addEventListener('popstate', this.reFind)
+    window.addEventListener('popstate', this.goBack)
     EventEmitter.addEventListener('pushstate', this.reFind)
   }
 
   componentWillUnmount() {
-    window.removeEventListener('popstate', this.reFind)
+    window.removeEventListener('popstate', this.goBack)
     EventEmitter.removeEventListener('pushstate', this.reFind)
   }
 
-  reFind = () => {
-    this.findTargetPage(window.location.href)
+  goBack = () => {
+    this.reFind(false)
+    history._length -= 1
   }
 
-  findTargetPage(location: string, originError?: any) {
+  reFind = (isForwoard = true) => {
+    this.parse(window.location.href, isForwoard)
+  }
+
+  parse = async (location: string, isForward = true) => {
+    const {page, data} = await this.findTargetPage(location)
+    const currentPage = this.currentPage
+    if (!currentPage) { // no need for animation
+      this.currentPage = page
+      this.setState({data, loading: false})
+    } else {
+      // TODO
+    }
+  }
+
+  async findTargetPage(location: string, originError?: any)
+    : Promise<{
+      page: ValidEasyReactRouterComponent | null,
+      data: EasyReactRouterComponentProps | null,
+  }> {
     const {base, default: defaultPage, wildcards} = this.props
     const locationObject = new URL(location, 'http://whatever/')
     let path = locationObject.pathname.slice(1)
@@ -108,34 +128,26 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
         return false
       })
     }
-
-    import(`./${base}/${pageFolderName}/index`).then(res => {
+    return import(`./${base}/${pageFolderName}/index`).then(res => {
       if (!res || !res.default) {
         throw new Error('NotFound')
       }
-      this.currentPage = res.default
-      this.setState({
-        loading: false,
-        data,
-      })
+      return {page: res.default as ValidEasyReactRouterComponent, data}
     }).catch(e => {
       if (path !== '404') {
-        this.findTargetPage('/404', e)
+        return this.findTargetPage('/404', e)
       } else {
         console.error(originError || e)
-        this.currentPage = null
-        this.setState({
-          loading: false,
-          data: null,
-        })
+        return {page: null, data: null}
       }
     })
   }
 
   render() {
     const {loading, data} = this.state
-    const CurrentPage = this.currentPage
+    const CurrentPage = this.currentPage! as any
     const {renderer} = this.props
+
     if (loading || !CurrentPage) return null
     if (!renderer) {
       return <CurrentPage {...data} />
@@ -145,25 +157,49 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
   }
 }
 
-export const history = {
-  _length: 0,
-  back() {
-    history.go(-1)
-  },
-  go(len: number) {
-    window.history.go(len)
-    history._length = Math.max(0, history._length - len)
-  },
+export class EasyReactRouterComponent<P = {}, S = {}, SS = any>
+  extends React.Component<P & EasyReactRouterComponentProps, S, SS> {
+  static enterAnim?: any
+  static exitAnim?: any
+  static popEnterAnim?: any
+  static popExitAnim?: any
 }
 
-Object.defineProperty(history, 'length', {
-  get() {
+export interface FunctionEasyReactRouterComponent<P = {}>
+  extends React.FunctionComponent<P & EasyReactRouterComponentProps> {
+  enterAnim?: any
+  exitAnim?: any
+  popEnterAnim?: any
+  popExitAnim?: any
+}
+
+type ValidEasyReactRouterComponent = EasyReactRouterComponent | FunctionEasyReactRouterComponent
+
+class History {
+  _length = 0
+  back() {
+    this.go(-1)
+  }
+  go(len: number): void {
+    window.history.go(len)
+    this._length = Math.max(0, this._length - len)
+  }
+  push(url: string): void {
+    this._length += 1
+    window.history.pushState({
+      tm: Date.now(),
+    }, '', url)
+    EventEmitter.dispatchEvent('pushstate')
+  }
+  get length() {
     return history._length
-  },
-  set(length: number) {
-    // do nothing
-  },
-})
+  }
+  set length(_) {
+    throw new Error('history.length is readonly')
+  }
+}
+
+export const history = new History()
 
 interface LinkProps {
   href: string
@@ -189,11 +225,7 @@ export const Link: React.FunctionComponent<LinkProps> = ({
     if (target === '_blank') {
       window.open(href)
     } else {
-      history._length += 1
-      window.history.pushState({
-        tm: Date.now(),
-      }, '', `${url.pathname}${url.search}${url.hash}`)
-      EventEmitter.dispatchEvent('pushstate')
+      history.push(`${url.pathname}${url.search}${url.hash}`)
     }
   }
 

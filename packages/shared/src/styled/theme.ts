@@ -16,6 +16,7 @@ export interface ThemeInterface {
   zIndexPortal: number
   maskBg: string
   shadowColor: string
+  navbarHeight: string
 }
 
 export const theme: ThemeInterface = {
@@ -31,6 +32,7 @@ export const theme: ThemeInterface = {
   disabledColor: '#8a8a8f',
   borderColor: '#8a8a8f',
   horizontalPadding: '18px',
+  navbarHeight: '44px',
   zIndexPortal: 1000,
   maskBg: 'rgba(0, 0, 0, .6)',
   shadowColor: 'rgba(0, 0, 0, .8)',

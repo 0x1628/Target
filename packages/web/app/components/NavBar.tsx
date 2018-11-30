@@ -28,7 +28,7 @@ position: fixed;
 bottom: 0;
 width: 100%;
 flex-direction: row;
-height: 44px;
+height: ${props => props.theme.navbarHeight};
 align-items: center;
 padding: 0 ${props => props.theme.horizontalPadding};
 background: #f8f8f8;
@@ -58,12 +58,21 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
   state: NavBarState = {showAddModal: false}
 
-  handleAdd = (e: React.MouseEvent) => {
+  handleShowAdd = (e: React.MouseEvent) => {
     this.setState({showAddModal: true})
   }
 
   handleCloseAdd = () => {
     this.setState({showAddModal: false})
+  }
+
+  handleAdd = (data: Partial<Task>) => {
+    const {addParams, onAdd} = this.props
+    onAdd({
+      ...data,
+      ...addParams,
+    })
+    this.handleCloseAdd()
   }
 
   render() {
@@ -83,22 +92,24 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
           <NavBarCenterWrapper>{children}</NavBarCenterWrapper>
           <Button
             preset="circle"
-            onClick={this.handleAdd}
+            onClick={this.handleShowAdd}
             className="add-button"
             aria-label="add"
           >
             <Icon name="plus" />
           </Button>
         </NavBarWrapper>
-        <If value={showAddModal}>
-          <Modal
-            shouldCloseOnMaskClick={true}
-            unmountDelay={Modal.transitionDuration}
+        <Modal
+          isOpen={showAddModal}
+          shouldCloseOnMaskClick={true}
+          unmountDelay={Modal.transitionDuration}
+          onRequestClose={this.handleCloseAdd}
+        >
+          <TaskAddDialog
             onRequestClose={this.handleCloseAdd}
-          >
-            <TaskAddDialog onRequestClose={this.handleCloseAdd} />
-          </Modal>
-        </If>
+            onSubmit={this.handleAdd}
+          />
+        </Modal>
       </>
     )
   }

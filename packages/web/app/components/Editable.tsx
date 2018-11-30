@@ -8,7 +8,8 @@ interface EditableProps {
   className?: string
   readOnly: boolean
   placeholder?: string
-  onChange(str: string): void
+  onChange?(str: string): void
+  onSubmit?(): void
 }
 
 interface EditableState {
@@ -70,6 +71,16 @@ class Editable extends React.Component<EditableProps, EditableState> {
     document.execCommand('insertHTML', false, text)
   }
 
+  handleKeyDown = (e: React.KeyboardEvent) => {
+    const {onSubmit, type} = this.props
+    if (e.keyCode === 13 && type === 'singleline') {
+      e.preventDefault()
+      if (onSubmit) {
+        onSubmit()
+      }
+    }
+  }
+
   handleInput = () => {
     this.changed = true
     if (!this.inputEl!.innerHTML || /^<br ?\/?>$/.test(this.inputEl!.innerHTML)) {
@@ -106,7 +117,7 @@ class Editable extends React.Component<EditableProps, EditableState> {
   }
 
   render() {
-    const {placeholder, readOnly, className} = this.props
+    const {placeholder, readOnly, className, type} = this.props
     const {focused} = this.state
 
     let html = this.html
@@ -119,17 +130,21 @@ class Editable extends React.Component<EditableProps, EditableState> {
 
     if (readOnly) {
       return (
-        <div dangerouslySetInnerHTML={{__html: html || Editable.emptyDiv}} />
+        <div
+          className={cx(className, `is-${type}`)}
+          dangerouslySetInnerHTML={{__html: html || Editable.emptyDiv}}
+        />
       )
     }
 
     return (
       <EditableWrapper
-        className={cx(className, usePlaceholder && 'is-placeholder')}
+        className={cx(className, usePlaceholder && 'is-placeholder', `is-${type}`)}
         role="textbox"
         tabIndex={0}
         contentEditable
         onPaste={this.handlePaste}
+        onKeyDown={this.handleKeyDown}
         onInput={this.handleInput}
         onFocus={this.handleFocus}
         onBlur={this.handleBlur}

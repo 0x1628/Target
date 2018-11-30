@@ -34,7 +34,8 @@ export function create(task: Partial<Task>, index: number): Task {
     childrenIds: [],
     tags: [],
     state: TaskState.Normal,
-    title: task.title,
     id: task.id,
+    title: task.title,
+    ...task,
   }
 }

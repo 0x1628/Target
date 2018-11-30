@@ -32,7 +32,8 @@ const Button: React.FunctionComponent<ButtonProps> =
   ({children, onClick, preset = 'ghost', color = 'primary', ...rest}) => {
   const TargetButton = ButtonSet[preset]
   let TargetButtonColored = styled(TargetButton)`
-    color: ${props => getColor(props.theme, color)};
+    color: ${props => preset === 'solid' ? '' : getColor(props.theme, color)};
+    fill: ${props => preset === 'solid' ? '' : getColor(props.theme, color)};
     border-color: ${props => getColor(props.theme, color)};
     fill: ${props => getColor(props.theme, color)};
   `

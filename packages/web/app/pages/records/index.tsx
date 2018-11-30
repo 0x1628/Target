@@ -1,33 +1,25 @@
 import * as React from 'react'
-import RecordContainer, {CallbackArguments} from 'shared/containers/RecordContainer'
+import RecordContainer from 'shared/containers/RecordContainer'
 import {getSpDate} from 'shared/utils'
-import {EasyReactRouterComponentProps} from '../../easy-react-router'
+import {FunctionEasyReactRouterComponent} from '../../easy-react-router'
 import DateSign from '../../components/DateSign'
 import NavBar from '../../components/NavBar'
+import Tasks from './Tasks'
 
-interface TasksProps {
-  tasks: CallbackArguments['tasks']
-  onAdd: CallbackArguments['actions']['addTask'],
-}
-
-const Tasks: React.FunctionComponent<TasksProps> = ({tasks, onAdd}) => {
-  return (
-    <div onClick={() => onAdd({title: 'haha'})}>{tasks.length}Click</div>
-  )
-}
-
-const RecordsIndex: React.FunctionComponent<EasyReactRouterComponentProps> = ({path}) => {
+const RecordsIndex: FunctionEasyReactRouterComponent = ({path}) => {
   const currentDate = path ? path[0] : getSpDate()
 
   return <RecordContainer date={currentDate}>
     {({tasks, actions}) => (
       <>
         <DateSign date={currentDate} />
-        <Tasks tasks={tasks} onAdd={actions.addTask} />
+        <Tasks tasks={tasks} />
         <NavBar onAdd={actions.addTask} addParams={{endDate: currentDate}}></NavBar>
       </>
     )}
   </RecordContainer>
 }
+
+RecordsIndex.exitAnim = 'hello-xxx'
 
 export default RecordsIndex

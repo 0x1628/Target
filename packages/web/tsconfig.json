@@ -3,7 +3,8 @@
   "compilerOptions": {
     "jsx": "react",
     "lib": ["esnext", "dom"],
-    "rootDir": "../"
+    "rootDir": "../",
+    "target": "es5"
   },
   "include": [
     "app/**/*",
