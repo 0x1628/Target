@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled from 'shared/styled'
 import {Task} from 'shared/models/Task'
-import {history} from '../easy-react-router'
+import {history} from '../easy-react-router/index'
 
 interface TaskItemProps {
   task: Task

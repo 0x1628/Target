@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {theme} from 'shared/styled/theme'
 import {ThemeProvider, createGlobalStyle} from 'shared/styled/index'
-import {EasyReactRouter, Link} from './easy-react-router'
+import {EasyReactRouter, Link} from './easy-react-router/index'
 
 const GlobalStyle = createGlobalStyle`
 a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, body,
@@ -44,6 +44,62 @@ a {
 #root {
   min-height: 100vh;
 }
+
+#root .EasyReactRouter {
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  position: relative;
+  background: #eee;
+}
+
+#root .EasyReactRouterItem {
+  min-height: 100vh;
+  width: 100vw;
+  background: #fff;
+}
+
+.EasyReactRouterItem.enteranim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all .3s ease-out .1s;
+  transform: translateX(100vw);
+}
+
+.EasyReactRouterItem.enteranim--active {
+  transform: translateX(0);
+}
+
+.EasyReactRouterItem.exitanim {
+  transition: all .3s ease-out;
+}
+
+.EasyReactRouterItem.exitanim--active {
+  transform: scale(.8);
+}
+
+.EasyReactRouterItem.popexitanim {
+  transition: all .3s ease-in;
+  position: relative;
+  z-index: 1;
+}
+
+.EasyReactRouterItem.popexitanim--active {
+  transform: translateX(100vw);
+}
+
+.EasyReactRouterItem.popenteranim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(.8);
+  transition: all .3s ease-out;
+}
+
+.EasyReactRouterItem.popenteranim--active {
+  transform: scale(1);
+}
 `
 
 const Layout: React.FunctionComponent = ({children}) => {
@@ -60,16 +116,15 @@ const Layout: React.FunctionComponent = ({children}) => {
 export default class App extends React.Component {
   render() {
     return (
-      <>
+      <Layout>
         <EasyReactRouter
-          default="records"
-          wildcards={{
-            '/records/([\\d-]+)$': 'records',
-            '/tasks/([\\w-]+)$': 'tasks',
+          alias={{
+            '/': '/records',
+            '/records/([\\d-]+)': '/records?id=$1',
+            '/tasks/([\\w-]+)': '/tasks?id=$1',
           }}
-          renderer={(children) => (<Layout>{children}</Layout>)}
         />
-      </>
+      </Layout>
     )
   }
 }

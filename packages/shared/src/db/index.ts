@@ -34,7 +34,7 @@ export function execSyncWithFullResult<T>(
   method: keyof Operations<any>, tableName: keyof typeof Tables, ...args: any[]): List<T> {
   const m: any = hostOperations[method]
   m(tableName, ...args)
-  return hostOperations.list(tableName)
+  return {...hostOperations.list(tableName)}
 }
 
 export async function init() {

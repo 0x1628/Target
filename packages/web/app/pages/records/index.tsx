@@ -1,13 +1,13 @@
 import * as React from 'react'
 import RecordContainer from 'shared/containers/RecordContainer'
 import {getSpDate} from 'shared/utils'
-import {FunctionEasyReactRouterComponent} from '../../easy-react-router'
+import {FunctionEasyReactRouterComponent} from '../../easy-react-router/index'
 import DateSign from '../../components/DateSign'
 import NavBar from '../../components/NavBar'
 import Tasks from './Tasks'
 
-const RecordsIndex: FunctionEasyReactRouterComponent = ({path}) => {
-  const currentDate = path ? path[0] : getSpDate()
+const RecordsIndex: FunctionEasyReactRouterComponent = ({query}) => {
+  const currentDate = query.id || getSpDate()
 
   return <RecordContainer date={currentDate}>
     {({tasks, actions}) => (
@@ -20,6 +20,28 @@ const RecordsIndex: FunctionEasyReactRouterComponent = ({path}) => {
   </RecordContainer>
 }
 
-RecordsIndex.exitAnim = 'hello-xxx'
+RecordsIndex.exitAnim = (node) => {
+  return new Promise(resolve => {
+    node.classList.add('exitanim')
+    requestAnimationFrame(() => {
+      node.addEventListener('transitionend', () => {
+        resolve()
+      })
+      node.classList.add('exitanim--active')
+    })
+  })
+}
+
+RecordsIndex.popEnterAnim = (node) => {
+  return new Promise(resolve => {
+    node.classList.add('popenteranim')
+    requestAnimationFrame(() => {
+      node.addEventListener('transitionend', () => {
+        resolve()
+      })
+      node.classList.add('popenteranim--active')
+    })
+  })
+}
 
 export default RecordsIndex
