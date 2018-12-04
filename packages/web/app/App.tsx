@@ -1,7 +1,8 @@
 import * as React from 'react'
 import {theme} from 'shared/styled/theme'
 import {ThemeProvider, createGlobalStyle} from 'shared/styled/index'
-import {EasyReactRouter, Link} from './easy-react-router/index'
+import {EasyReactRouter} from './easy-react-router/index'
+import Navbar, {NavBarContext, NavBarContextValue} from './components/NavBar'
 
 const GlobalStyle = createGlobalStyle`
 a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, body,
@@ -65,6 +66,7 @@ a {
   left: 0;
   transition: all .3s ease-out .1s;
   transform: translateX(100vw);
+  z-index: 1;
 }
 
 .EasyReactRouterItem.enteranim--active {
@@ -102,29 +104,39 @@ a {
 }
 `
 
-const Layout: React.FunctionComponent = ({children}) => {
-  return (
-    <ThemeProvider theme={theme}>
-      <>
-        {children as JSX.Element}
-        <GlobalStyle />
-      </>
-    </ThemeProvider>
-  )
-}
-
 export default class App extends React.Component {
+
+  state: {context: NavBarContextValue} = {
+    context: {
+      key: '',
+      update: (value) => {
+        if (value.key !== this.state.context.key) {
+          this.setState({
+            context: {
+              ...this.state.context,
+              ...value,
+            },
+          })
+        }
+      },
+    },
+  }
+
   render() {
     return (
-      <Layout>
-        <EasyReactRouter
-          alias={{
-            '/': '/records',
-            '/records/([\\d-]+)': '/records?id=$1',
-            '/tasks/([\\w-]+)': '/tasks?id=$1',
-          }}
-        />
-      </Layout>
+      <ThemeProvider theme={theme}>
+        <NavBarContext.Provider value={this.state.context}>
+          <EasyReactRouter
+            alias={{
+              '/': '/records',
+              '/records/([\\d-]+)': '/records?id=$1',
+              '/tasks/([\\w-]+)': '/tasks?id=$1',
+            }}
+          />
+          <Navbar />
+          <GlobalStyle />
+        </NavBarContext.Provider>
+      </ThemeProvider>
     )
   }
 }

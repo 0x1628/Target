@@ -10,10 +10,7 @@ interface EasyReactRouterProps {
 
 interface EasyReactRouterState {
   loading: boolean
-  data: any
-  key: string | null
-  nextData: any
-  nextKey: string | null
+  pageInfo: {data: any, key: string | null}[]
 }
 
 export interface EasyReactRouterComponentProps {
@@ -28,18 +25,19 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
     base: 'pages',
   }
 
-  currentPage: ValidEasyReactRouterComponent | null = null
-  nextPage: ValidEasyReactRouterComponent | null = null
-  animating = false
-  currentPageNode: HTMLElement | null = null
-  nextPageNode: HTMLElement | null = null
+  currentPages: ValidEasyReactRouterComponent[] = []
+  pageNodes: HTMLElement[] = []
+  queue: {location: string, isForward: boolean} | null = null
 
   constructor(props: EasyReactRouterProps) {
     super(props)
     if (props.initLocation) { // server render
       this.parse(props.initLocation || '/')
     } else {
-      this.state = {loading: true, data: null, key: null, nextData: null, nextKey: null}
+      this.state = {
+        loading: true,
+        pageInfo: [],
+      }
     }
   }
 
@@ -63,71 +61,89 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
     history.unsafe_setLength(history.length + (isForward ? 1 : -1))
   }
 
+  insertQueue(location: string, isForward: boolean) {
+    this.queue = {location, isForward}
+  }
+
+  checkQueue(currentLocation: string) {
+    if (this.queue && this.queue.location !== currentLocation) {
+      const target = this.queue
+      this.queue = null
+      requestAnimationFrame(() => {
+        this.parse(target.location, target.isForward)
+      })
+    } else if (this.queue) {
+      this.queue = null
+    }
+  }
+
   reFind = (isForwoard = true) => {
     this.parse(window.location.href, isForwoard)
   }
 
   parse = async (location: string, isForward = true) => {
     const {page, data, key} = await this.findTargetPage(location)
-
-    const currentPage = this.currentPage
     if (!page) {
-      this.currentPage = null
-      this.setState({data: null, loading: false, key: null})
+      this.currentPages = []
+      this.setState({loading: false, pageInfo: []})
+      return
+    }
+    if (this.currentPages.length === 2) { // animating
+      this.insertQueue(location, isForward)
       return
     }
 
+    const currentPage = this.currentPages[0]
     const setFinal = () => {
       return new Promise(resolve => {
-        this.animating = false
-        this.nextPage = null
-        this.currentPage = page
+        this.currentPages = this.currentPages.slice(0, 1)
+        this.pageNodes = this.pageNodes.slice(0, 1)
         this.setState({
-          data,
           loading: false,
-          key,
-          nextData: null,
-          nextKey: null,
+          pageInfo: this.state.pageInfo.slice(0, 1),
         }, resolve)
       })
     }
 
     if (!currentPage) { // no need for animation
-      this.currentPage = page
-      this.setState({data, loading: false, key})
+      this.currentPages = [page]
+      this.setState({
+        loading: false,
+        pageInfo: [{data, key}],
+      })
     } else if (
+      // If history go forward, next page must have enterAnim
+      // or if history go backward, current page must have popExitAnim
+      // otherwise skip all animation
       (isForward && !page.enterAnim) ||
       (!isForward && !currentPage.popExitAnim)
     ) {
       setFinal()
     } else {
-      if (this.animating) {
-        return
-      }
-      this.nextPage = page
-      this.animating = true
+      this.currentPages = [page].concat(this.currentPages)
 
       this.setState({
-        nextData: data,
-        nextKey: key,
+        pageInfo: [{data, key}].concat(this.state.pageInfo),
       }, () => {
         if (isForward) {
-          page.enterAnim!(this.nextPageNode!).then(() => {
+          page.enterAnim!(this.pageNodes[0]).then(() => {
             return setFinal()
           }).then(() => {
-            this.currentPageNode!.className = EasyReactRouter.itemClassName
+            this.pageNodes[0].className = EasyReactRouter.itemClassName
+            this.checkQueue(location)
           })
           if (currentPage.exitAnim) {
-            currentPage.exitAnim(this.currentPageNode!)
+            currentPage.exitAnim(this.pageNodes[1])
           }
         } else {
-          currentPage.popExitAnim!(this.currentPageNode!).then(() => {
+          currentPage.popExitAnim!(this.pageNodes[1]).then(() => {
             return setFinal()
           }).then(() => {
-            this.currentPageNode!.className = EasyReactRouter.itemClassName
+            this.pageNodes[0].className = EasyReactRouter.itemClassName
+            this.checkQueue(location)
           })
           if (page.popEnterAnim) {
-            page.popEnterAnim(this.nextPageNode!)
+            page.popEnterAnim(this.pageNodes[0])
           }
         }
       })
@@ -193,24 +209,20 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
   }
 
   render() {
-    const {loading, data, key, nextData, nextKey} = this.state
-    const CurrentPage = this.currentPage!
-
-    const NextPage = this.nextPage
-
-    if (loading || !CurrentPage) return null
+    const {loading, pageInfo} = this.state
+    if (loading || !this.currentPages.length) return null
 
     return (
       <div className="EasyReactRouter">
-        <div key={key || '1'} className={EasyReactRouter.itemClassName} ref={el => this.currentPageNode = el}>
-          <CurrentPage {...data} />
-        </div>
-        {NextPage ?
-        <div key={nextKey || '2'} className={EasyReactRouter.itemClassName} ref={el => this.nextPageNode = el}>
-          <NextPage {...nextData} />
-        </div>
-        : null
-        }
+        {this.currentPages.map((Page, index) => (
+          <div
+            key={pageInfo[index].key || ''}
+            className={EasyReactRouter.itemClassName}
+            ref={el => this.pageNodes[index] = el!}
+          >
+            <Page {...pageInfo[index].data} />
+          </div>
+        ))}
       </div>
     )
   }

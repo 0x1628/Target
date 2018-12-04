@@ -14,7 +14,7 @@ type AddParams = {
 }
 
 interface NavBarProps {
-  onAdd: CallbackArguments['actions']['addTask']
+  onAdd?: CallbackArguments['actions']['addTask']
   addParams?: AddParams
   children?: JSX.Element
 }
@@ -24,30 +24,30 @@ interface NavBarState {
 }
 
 const NavBarWrapper = styled.div`
-position: fixed;
-bottom: 0;
-width: 100%;
-flex-direction: row;
-height: ${props => props.theme.navbarHeight};
-align-items: center;
-padding: 0 ${props => props.theme.horizontalPadding};
-background: #f8f8f8;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  flex-direction: row;
+  height: ${props => props.theme.navbarHeight};
+  align-items: center;
+  padding: 0 ${props => props.theme.horizontalPadding};
+  background: #f8f8f8;
 
-& button {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-}
+  & button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+  }
 
-& .add-button svg {
-  width: 15px;
-  height: 15px;
-}
+  & .add-button svg {
+    width: 15px;
+    height: 15px;
+  }
 
-& .menu-button svg {
-  width: 24px;
-  height: 17px;
-}
+  & .menu-button svg {
+    width: 24px;
+    height: 17px;
+  }
 `
 
 const NavBarCenterWrapper = styled.div`
@@ -68,7 +68,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
 
   handleAdd = (data: Partial<Task>) => {
     const {addParams, onAdd} = this.props
-    onAdd({
+    onAdd!({
       ...data,
       ...addParams,
     })
@@ -115,4 +115,30 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
   }
 }
 
-export default NavBar
+const NavBarWithContext: React.FunctionComponent<NavBarProps> = (
+  {onAdd: propOnAdd, addParams: propAddParams},
+) => {
+  return (
+    <NavBarContext.Consumer>
+      {({onAdd, addParams}) => (
+        <NavBar onAdd={propOnAdd || onAdd} addParams={propAddParams || addParams} />
+      )}
+    </NavBarContext.Consumer>
+  )
+}
+
+export default NavBarWithContext
+
+export interface NavBarContextValue {
+  key: string,
+  addParams?: AddParams,
+  onAdd?: CallbackArguments['actions']['addTask'],
+  update(value: Pick<NavBarContextValue, Exclude<keyof NavBarContextValue, 'update'>>): void
+}
+
+const NavBarContext = React.createContext<NavBarContextValue>({
+  key: '',
+  update() { /**/ },
+})
+
+export {NavBarContext}
