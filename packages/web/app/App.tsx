@@ -2,7 +2,7 @@ import * as React from 'react'
 import {theme} from 'shared/styled/theme'
 import {ThemeProvider, createGlobalStyle} from 'shared/styled/index'
 import {EasyReactRouter} from './easy-react-router/index'
-import Navbar, {NavBarContext, NavBarContextValue} from './components/NavBar'
+import Nav, {NavContext, NavContextValue} from './components/Nav'
 
 const GlobalStyle = createGlobalStyle`
 a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, body,
@@ -42,6 +42,11 @@ a {
   text-decoration: none;
 }
 
+body {
+  width: 100vw;
+  overflow: hidden;
+}
+
 #root {
   min-height: 100vh;
 }
@@ -58,6 +63,7 @@ a {
   min-height: 100vh;
   width: 100vw;
   background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
 .EasyReactRouterItem.enteranim {
@@ -82,8 +88,10 @@ a {
 }
 
 .EasyReactRouterItem.popexitanim {
+  position: absolute;
+  top: 0; 
+  left: 0;
   transition: all .3s ease-in;
-  position: relative;
   z-index: 1;
 }
 
@@ -106,11 +114,13 @@ a {
 
 export default class App extends React.Component {
 
-  state: {context: NavBarContextValue} = {
+  unmounted = false
+
+  state: {context: NavContextValue} = {
     context: {
       key: '',
       update: (value) => {
-        if (value.key !== this.state.context.key) {
+        if (value.key !== this.state.context.key && !this.unmounted) {
           this.setState({
             context: {
               ...this.state.context,
@@ -122,10 +132,14 @@ export default class App extends React.Component {
     },
   }
 
+  componentWillUnmount() {
+    this.unmounted = true
+  }
+
   render() {
     return (
       <ThemeProvider theme={theme}>
-        <NavBarContext.Provider value={this.state.context}>
+        <NavContext.Provider value={this.state.context}>
           <EasyReactRouter
             alias={{
               '/': '/records',
@@ -133,9 +147,9 @@ export default class App extends React.Component {
               '/tasks/([\\w-]+)': '/tasks?id=$1',
             }}
           />
-          <Navbar />
+          <Nav />
           <GlobalStyle />
-        </NavBarContext.Provider>
+        </NavContext.Provider>
       </ThemeProvider>
     )
   }

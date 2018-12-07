@@ -2,7 +2,8 @@ import * as React from 'react'
 import TaskContainer from 'shared/containers/TaskContainer'
 import If from 'shared/lang/If'
 import {EasyReactRouterComponent} from '../../easy-react-router/index'
-import NavBar from '../../components/NavBar'
+import {NavContextUpdater} from '../../components/Nav'
+import Back from '../../components/Back'
 import TaskDetail from './TaskDetail'
 
 class TaskIndex extends EasyReactRouterComponent {
@@ -11,12 +12,17 @@ class TaskIndex extends EasyReactRouterComponent {
     if (!id) return null
     return (
       <TaskContainer id={id}>
-        {({task, actions}) => (
+        {({task, subTasks, parentTasks, actions}) => <>
+          <Back />
           <If value={task}>
-            <TaskDetail task={task!} />
-            <NavBar onAdd={actions.addTask} addParams={{parentId: task!.id}} />
+            <TaskDetail task={task!} subTasks={subTasks} parentTasks={parentTasks} />
+            <NavContextUpdater
+              id={`tasksindex-${id}`}
+              addParams={{parentId: task!.id, endDate: task!.endDate}}
+              onAdd={actions.addTask}
+            />
           </If>
-        )}
+        </>}
       </TaskContainer>
     )
   }

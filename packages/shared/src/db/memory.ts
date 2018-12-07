@@ -21,7 +21,8 @@ export function memorify(operations: Operations<Promise<any>>): Operations<null>
         ...list.meta,
         last: list.meta.last + 1,
       }
-      operations.add(table, data)
+      operations.save ? operations.save(table, list)
+        : operations.add(table, data)
       return data
     },
     modify(table, data) {
@@ -33,7 +34,8 @@ export function memorify(operations: Operations<Promise<any>>): Operations<null>
         ...data,
       }
       list.data = list.data.slice(0, index).concat(newItem).concat(list.data.slice(index + 1))
-      operations.modify(table, data)
+      operations.save ? operations.save(table, list)
+        : operations.modify(table, data)
       return newItem
     },
     delete(table, data) {
@@ -45,7 +47,8 @@ export function memorify(operations: Operations<Promise<any>>): Operations<null>
         ...list.meta,
         last: list.meta.last - 1,
       }
-      operations.delete(table, data)
+      operations.save ? operations.save(table, list)
+        : operations.delete(table, data)
       return true
     },
     list(table) {
@@ -56,7 +59,7 @@ export function memorify(operations: Operations<Promise<any>>): Operations<null>
       }) */
       return memoryCache[table]
     },
-    findById(table, id, {strict} = {strict: false}) {
+    findById(table, id, {strict} = {strict: true}) {
       ensure(table)
       const list = memoryCache[table]
       let index = -1

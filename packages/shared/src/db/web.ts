@@ -2,19 +2,31 @@ import {Operations, List} from './index'
 import {Base} from '../models/Base'
 import {memorify} from './memory'
 
+interface QueueItem {
+  table: string
+  data: string
+}
+const queue: QueueItem[] = []
+
 const operations: Operations<Promise<any>> = {
+  async save(table, data) {
+    if (typeof data !== 'string') {
+      data = JSON.stringify(data)
+    }
+    queue.push({table, data})
+  },
   async add(table, data) {
     const dbData = await operations.list(table)
     dbData.data.push(data)
     dbData.meta.last = dbData.meta.last + 1
-    localStorage.setItem(table, JSON.stringify(dbData))
+    queue.push({table, data: JSON.stringify(dbData)})
     return data
   },
   async delete(table, data) {
     const dbData = await operations.list(table)
     dbData.data = dbData.data.filter(i => i.id === data.id)
     dbData.meta.last = dbData.meta.last - 1
-    localStorage.setItem(table, JSON.stringify(dbData))
+    queue.push({table, data: JSON.stringify(dbData)})
     return true
   },
   async modify(table, data) {
@@ -30,7 +42,7 @@ const operations: Operations<Promise<any>> = {
       }
       return i
     })
-    localStorage.setItem(table, JSON.stringify(dbData))
+    queue.push({table, data: JSON.stringify(dbData)})
     return result!
   },
   async list(table) {
@@ -61,5 +73,24 @@ const operations: Operations<Promise<any>> = {
     return operations.list(table)
   },
 }
+
+function requestSaveData() {
+  (window as any).requestIdleCallback(() => {
+    requestSaveData()
+  })
+
+  if (queue.length) {
+    const dataMap: any = {}
+    queue.forEach(item => {
+      dataMap[item.table] = item.data
+    })
+    Object.keys(dataMap).forEach(key => {
+      const value = dataMap[key]
+      localStorage.setItem(key, value)
+    })
+  }
+}
+
+requestSaveData()
 
 export default memorify(operations)

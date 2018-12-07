@@ -118,7 +118,11 @@ export class EasyReactRouter extends React.Component<EasyReactRouterProps, EasyR
       (isForward && !page.enterAnim) ||
       (!isForward && !currentPage.popExitAnim)
     ) {
-      setFinal()
+      this.currentPages = [page]
+      this.setState({
+        loading: false,
+        pageInfo: [{data, key}],
+      })
     } else {
       this.currentPages = [page].concat(this.currentPages)
 

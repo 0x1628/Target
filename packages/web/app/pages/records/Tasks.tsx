@@ -9,7 +9,7 @@ interface TasksProps {
 
 const TasksWrapper = styled.div`
   flex: 1;
-  margin: 40px ${props => `${props.theme.horizontalPadding} ${props.theme.navbarHeight}`};
+  margin: 40px ${props => `${props.theme.horizontalPadding} ${props.theme.bottomBarHeight}`};
 `
 
 const Tasks: React.FunctionComponent<TasksProps> = ({tasks}) => {

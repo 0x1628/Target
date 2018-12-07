@@ -4,7 +4,7 @@ import {UnmountProps} from 'shared/lang/index'
 import styled from 'shared/styled'
 
 // tslint:disable-next-line
-export interface PortalProps extends UnmountProps {
+export interface PortalProps extends Partial<UnmountProps> {
   forwardedRef?: React.Ref<any>,
 }
 

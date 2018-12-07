@@ -5,6 +5,7 @@ interface LinkProps {
   href: string
   target?: '_blank' | '_self' | undefined
   Component?: string | React.ComponentClass
+  onClick?(e: MouseEvent): boolean | void
 }
 
 export const Link: React.FunctionComponent<LinkProps> = ({
@@ -12,9 +13,15 @@ export const Link: React.FunctionComponent<LinkProps> = ({
   target,
   children,
   Component,
+  onClick,
   ...rest}) => {
-  const onClick = (e: Event) => {
+  const handleClick = (e: MouseEvent) => {
     e.preventDefault()
+    if (onClick) {
+      if (onClick(e)) {
+        return
+      }
+    }
 
     const url = new URL(href, location.origin)
     if (url.origin !== location.origin) {
@@ -33,7 +40,7 @@ export const Link: React.FunctionComponent<LinkProps> = ({
 
   return (
     <Component
-      onClick={onClick}
+      onClick={handleClick}
       href={href}
       target={target}
       {...rest}

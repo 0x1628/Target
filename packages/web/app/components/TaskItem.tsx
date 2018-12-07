@@ -8,6 +8,8 @@ interface TaskItemProps {
 }
 
 const TaskItemWrapper = styled.div`
+  padding: 3px 0;
+
   & .main-line {
     flex-direction: row;
     line-height: 1.4;

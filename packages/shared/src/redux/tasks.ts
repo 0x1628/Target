@@ -1,7 +1,7 @@
 import {ThunkAction} from 'redux-thunk'
 import {RootState} from './index'
 import {Task, create} from '../models/Task'
-import {execSyncWithFullResult, ListMeta} from '../db/index'
+import {execSyncWithFullResult, ListMeta, usedb} from '../db/index'
 
 enum ActionName {
   Add = 'tasks:add',
@@ -40,7 +40,16 @@ const defaultState: TaskReducerState = {
 export default function (state = {...defaultState}, action: Actions) {
   switch (action.type) {
     case ActionName.Add: {
-      return execSyncWithFullResult<Task>('add', 'tasks', create(action.payload, state.meta.last))
+      const task = create(action.payload, state.meta.last)
+      let result = execSyncWithFullResult<Task>('add', 'tasks', task)
+      if (typeof task.parentId === 'string') {
+        const parentTask = usedb().findById('tasks', task.parentId).target as Task
+        result = execSyncWithFullResult<Task>('modify', 'tasks', {
+          ...parentTask,
+          childrenIds: parentTask.childrenIds.concat(task.id),
+        })
+      }
+      return result
     }
     default:
       return state

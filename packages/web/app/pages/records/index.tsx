@@ -1,20 +1,37 @@
 import * as React from 'react'
-import RecordContainer from 'shared/containers/RecordContainer'
+import RecordContainer, {CallbackArguments} from 'shared/containers/RecordContainer'
 import {getSpDate} from 'shared/utils'
-import {EasyReactRouterComponent, EasyReactRouterComponentProps} from '../../easy-react-router/index'
+import {EasyReactRouterComponent} from '../../easy-react-router/index'
 import DateSign from '../../components/DateSign'
-import {NavBarContext, NavBarContextValue} from '../../components/NavBar'
+import {NavContextUpdater} from '../../components/Nav'
 import Tasks from './Tasks'
 
 interface RecordsIndexProps {
-  updateNavBarContext: NavBarContextValue['update'],
   test: string,
 }
 
-class RecordsIndex extends EasyReactRouterComponent<RecordsIndexProps> {
+interface UpdaterProps {
+  onAdd: any
+  addParams: any
+  update: any
+}
+class Updater extends React.Component<UpdaterProps> {
   componentDidMount() {
-    console.log(this.props.updateNavBarContext)
+    const {onAdd, addParams, update} = this.props
+    update({
+      key: `recordsinxe-${JSON.stringify(addParams)}`,
+      addParams,
+      onAdd,
+    })
   }
+
+  render() {
+    return null
+  }
+}
+
+class RecordsIndex extends EasyReactRouterComponent<RecordsIndexProps> {
+  currentDate!: string
 
   render() {
     const currentDate = this.props.query.id || getSpDate()
@@ -24,12 +41,18 @@ class RecordsIndex extends EasyReactRouterComponent<RecordsIndexProps> {
         <>
           <DateSign date={currentDate} />
           <Tasks tasks={tasks} />
+          <NavContextUpdater
+            id={`recordsindex-${currentDate}`}
+            addParams={{endDate: currentDate}}
+            onAdd={actions.addTask}
+          />
         </>
       )}
     </RecordContainer>
   }
 }
 
+/*
 RecordsIndex.exitAnim = (node) => {
   return new Promise(resolve => {
     node.classList.add('exitanim')
@@ -53,30 +76,6 @@ RecordsIndex.popEnterAnim = (node) => {
     })
   })
 }
+*/
 
-type consumerMap<T> = (props: T) =>
-  {[key: string]: T[keyof T]}
-function mapContextToProps<T, P = any>(Consumer: React.Consumer<T>, map: consumerMap<T>) {
-  return function (Component: React.ComponentClass<P>) {
-    const MappedClass = React.forwardRef<typeof Component, P>((props, ref) => (
-      <Consumer>
-        {(context) => (
-          <Component {...props} ref={ref} {...map(context)} />
-        )}
-      </Consumer>
-    ))
-
-    for (const i in Component) {
-      if ((Component as object).hasOwnProperty(i)) {
-        (MappedClass as any)[i] = (Component as any)[i]
-      }
-    }
-
-    return MappedClass
-  }
-}
-
-export default mapContextToProps<NavBarContextValue, RecordsIndexProps & EasyReactRouterComponentProps>(
-  NavBarContext.Consumer, ({update}) => ({
-  updateNavBarContext: update,
-}))(RecordsIndex)
+export default RecordsIndex

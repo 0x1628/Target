@@ -7,12 +7,16 @@ enum TaskState {
   Done,
 }
 
+enum TaskParentId {
+  Root = 0,
+}
+
 export interface Task extends Base {
   title: string
   description: string
   endDate: string | null
   dueDate: string | null
-  parentId: string | null
+  parentId: string | TaskParentId | null
   childrenIds: string[]
   state: TaskState
   tags: string[]

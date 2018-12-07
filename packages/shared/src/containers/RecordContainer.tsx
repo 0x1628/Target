@@ -21,8 +21,10 @@ class RecordContainer extends React.Component<
 > {
   render() {
     const {addTask, tasks} = this.props
+    const childrenIds = tasks.map(t => t.childrenIds).flat()
+    const tasksWithoutChildren = tasks.filter(t => childrenIds.indexOf(t.id) === -1)
     return this.props.children({
-      tasks,
+      tasks: tasksWithoutChildren,
       actions: {
         addTask,
       },

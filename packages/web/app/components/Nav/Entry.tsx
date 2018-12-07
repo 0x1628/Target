@@ -1,37 +1,38 @@
 import * as React from 'react'
 import {CallbackArguments} from 'shared/containers/RecordContainer'
 import {Task} from 'shared/models/Task'
-import If from 'shared/lang/If'
 import styled from 'shared/styled'
 import Icon from 'shared/elements/Icon'
-import Modal from './Modal'
-import Button from './Button'
-import TaskAddDialog from './TaskAddDialog'
+import Modal from '../Modal'
+import Button from '../Button'
+import TaskAddDialog from '../TaskAddDialog'
 
-type AddParams = {
+export type AddParams = {
   parentId?: Task['parentId'],
   endDate?: Task['endDate'],
 }
 
-interface NavBarProps {
+export interface EntryProps {
   onAdd?: CallbackArguments['actions']['addTask']
   addParams?: AddParams
   children?: JSX.Element
+  onMenuClick(): void
 }
 
-interface NavBarState {
+interface EntryState {
   showAddModal: boolean
 }
 
-const NavBarWrapper = styled.div`
+const EntryWrapper = styled.div`
   position: fixed;
   bottom: 0;
   width: 100%;
   flex-direction: row;
-  height: ${props => props.theme.navbarHeight};
+  height: ${props => props.theme.bottomBarHeight};
   align-items: center;
   padding: 0 ${props => props.theme.horizontalPadding};
   background: #f8f8f8;
+  z-index: ${props => props.theme.zIndexPortal - 100};
 
   & button {
     width: 28px;
@@ -50,13 +51,13 @@ const NavBarWrapper = styled.div`
   }
 `
 
-const NavBarCenterWrapper = styled.div`
+const EntryCenterWrapper = styled.div`
 flex: 1;
 `
 
-class NavBar extends React.Component<NavBarProps, NavBarState> {
+export class Entry extends React.Component<EntryProps, EntryState> {
 
-  state: NavBarState = {showAddModal: false}
+  state: EntryState = {showAddModal: false}
 
   handleShowAdd = (e: React.MouseEvent) => {
     this.setState({showAddModal: true})
@@ -76,20 +77,21 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
   }
 
   render() {
-    const {children} = this.props
+    const {children, onMenuClick} = this.props
     const {showAddModal} = this.state
 
     return (
       <>
-        <NavBarWrapper>
+        <EntryWrapper>
           <Button
             preset="plain"
             aria-label="menu"
             className="menu-button"
+            onClick={onMenuClick}
           >
             <Icon name="menu" />
           </Button>
-          <NavBarCenterWrapper>{children}</NavBarCenterWrapper>
+          <EntryCenterWrapper>{children}</EntryCenterWrapper>
           <Button
             preset="circle"
             onClick={this.handleShowAdd}
@@ -98,7 +100,7 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
           >
             <Icon name="plus" />
           </Button>
-        </NavBarWrapper>
+        </EntryWrapper>
         <Modal
           isOpen={showAddModal}
           shouldCloseOnMaskClick={true}
@@ -114,31 +116,3 @@ class NavBar extends React.Component<NavBarProps, NavBarState> {
     )
   }
 }
-
-const NavBarWithContext: React.FunctionComponent<NavBarProps> = (
-  {onAdd: propOnAdd, addParams: propAddParams},
-) => {
-  return (
-    <NavBarContext.Consumer>
-      {({onAdd, addParams}) => (
-        <NavBar onAdd={propOnAdd || onAdd} addParams={propAddParams || addParams} />
-      )}
-    </NavBarContext.Consumer>
-  )
-}
-
-export default NavBarWithContext
-
-export interface NavBarContextValue {
-  key: string,
-  addParams?: AddParams,
-  onAdd?: CallbackArguments['actions']['addTask'],
-  update(value: Pick<NavBarContextValue, Exclude<keyof NavBarContextValue, 'update'>>): void
-}
-
-const NavBarContext = React.createContext<NavBarContextValue>({
-  key: '',
-  update() { /**/ },
-})
-
-export {NavBarContext}

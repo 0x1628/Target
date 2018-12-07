@@ -22,7 +22,8 @@ export type Operations<T> = {
   modify(table: string, data: Partial<Base>, options?: any): OperationReturn<T, Base>;
   list(table: string, options?: any): OperationReturn<T, List<any>>;
   findById(table: string, id: Base['id'], options?: any): OperationReturn<T, {target: Base, index: number}>;
-  init(table: string): Promise<List>
+  init(table: string): Promise<List>;
+  save?(table: string, data: any): Promise<void> | void;
 }
 
 type Data = Task // TODO
@@ -30,12 +31,15 @@ type Data = Task // TODO
 const host = 'web' // TODO
 let hostOperations: Operations<null>
 
-export function execSyncWithFullResult<T>(
-  method: keyof Operations<any>, tableName: keyof typeof Tables, ...args: any[]): List<T> {
+export function execSyncWithFullResult<T, P = any>(
+  method: keyof Operations<any>, tableName: keyof typeof Tables, ...args: P[]): List<T>
+{
   const m: any = hostOperations[method]
   m(tableName, ...args)
   return {...hostOperations.list(tableName)}
 }
+
+export const usedb = () => hostOperations
 
 export async function init() {
   const m = await import(`./${host}`)

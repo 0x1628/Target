@@ -114,7 +114,7 @@ class Modal extends React.Component<ModalProps, ModalState> {
   }
 
   render() {
-    const {mask, children, onRequestClose, ...rest} = this.props
+    const {mask, children, onRequestClose, shouldCloseOnMaskClick, isOpen: pIsOpen, ...rest} = this.props
     const {isOpen} = this.state
     if (!isOpen) return null
     return (
