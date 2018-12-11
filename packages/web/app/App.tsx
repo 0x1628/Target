@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {theme} from 'shared/styled/theme'
 import {ThemeProvider, createGlobalStyle} from 'shared/styled/index'
-import {EasyReactRouter} from './easy-react-router/index'
+import {EasyReactRouter} from 'easy-react-router'
 import Nav, {NavContext, NavContextValue} from './components/Nav'
 
 const GlobalStyle = createGlobalStyle`
@@ -146,6 +146,7 @@ export default class App extends React.Component {
               '/records/([\\d-]+)': '/records?id=$1',
               '/tasks/([\\w-]+)': '/tasks?id=$1',
             }}
+            resolve={pageFolderName => import(/* webpackChunkName: "[request]" */ `./pages/${pageFolderName}/index`)}
           />
           <Nav />
           <GlobalStyle />

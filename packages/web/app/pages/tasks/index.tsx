@@ -1,7 +1,7 @@
 import * as React from 'react'
 import TaskContainer from 'shared/containers/TaskContainer'
 import If from 'shared/lang/If'
-import {EasyReactRouterComponent} from '../../easy-react-router/index'
+import {EasyReactRouterComponent} from 'easy-react-router'
 import {NavContextUpdater} from '../../components/Nav'
 import Back from '../../components/Back'
 import TaskDetail from './TaskDetail'

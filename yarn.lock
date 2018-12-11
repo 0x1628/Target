@@ -1316,6 +1316,11 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
+easy-react-router@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/easy-react-router/-/easy-react-router-0.1.0.tgz#bbacbe2ca91157c0d1d530c92659ed4391f9dc79"
+  integrity sha512-neZ+jscyI3zci5Ao41Y2CLp8FXwLQSx/GZDGsZD3egRmoBrBIenY77lW7RPYKK0tmbUJ0VrIjMc1QIk5/KVhYQ==
+
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {history} from '../easy-react-router'
+import {history} from 'easy-react-router'
 
 interface BackProps {
   onClick?(): boolean | void

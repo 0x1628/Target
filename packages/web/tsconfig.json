@@ -4,6 +4,8 @@
     "jsx": "react",
     "lib": ["esnext", "dom"],
     "rootDir": "../",
+    "module": "esnext",
+    "moduleResolution": "node",
     "target": "es5"
   },
   "include": [

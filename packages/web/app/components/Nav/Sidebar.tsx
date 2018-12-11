@@ -1,7 +1,7 @@
 import * as React from 'react'
 import styled, {createGlobalStyle} from 'shared/styled'
 import Portal from '../Portal'
-import {Link} from '../../easy-react-router'
+import {Link} from 'easy-react-router'
 
 const duration = 400
 

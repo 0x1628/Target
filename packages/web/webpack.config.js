@@ -27,7 +27,7 @@ module.exports = {
         loader: 'ts-loader',
         exclude: [/node_modules/, /shared\/.+\.d\.ts/],
         options: {
-          projectReferences: true,
+          projectReferences: false,
         },
       },
       {
@@ -52,6 +52,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'index.html',
+      chunksSortMode: 'none',
     }),
     isDev ? new webpack.HotModuleReplacementPlugin() : null,
     new webpack.DefinePlugin({

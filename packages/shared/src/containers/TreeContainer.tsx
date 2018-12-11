@@ -39,7 +39,7 @@ function addChildren(node: TreeNode, tasks: Task[]): TreeNode {
 }
 
 class TreeContainer extends React.Component<TreeContainerProps & ReturnType<typeof mapStateToProps>> {
-  cached: Tree = null
+  cached: Tree | null = null
 
   makeTree(): Tree {
     const {tasks} = this.props

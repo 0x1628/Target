@@ -1,7 +1,7 @@
 import * as React from 'react'
 import RecordContainer, {CallbackArguments} from 'shared/containers/RecordContainer'
 import {getSpDate} from 'shared/utils'
-import {EasyReactRouterComponent} from '../../easy-react-router/index'
+import {EasyReactRouterComponent} from 'easy-react-router'
 import DateSign from '../../components/DateSign'
 import {NavContextUpdater} from '../../components/Nav'
 import Tasks from './Tasks'
